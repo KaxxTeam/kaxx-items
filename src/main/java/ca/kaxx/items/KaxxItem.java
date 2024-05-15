@@ -14,7 +14,7 @@ import java.util.UUID;
  * Each KaxxItem has a provider, a unique identifier, and various methods to interact with the item.
  */
 @Getter
-public class KaxxItem {
+public final class KaxxItem {
 
     /**
      * The KaxxItemProvider interface defines the methods that a provider class for KaxxItem must implement.
@@ -42,7 +42,7 @@ public class KaxxItem {
      * The pickable variable determines whether or not a KaxxItem can be picked up by a player.
      * A KaxxItem is considered pickable if its pickable attribute is set to true, and unpickable if it is set to false.
      * When a player picks up a pickable KaxxItem, a {@link PlayerPickupItemEvent} is triggered, and the {@link KaxxItemProvider#onPickup(Player, PlayerPickupItemEvent)} method is
-     *  called.
+     * called.
      *
      * @see KaxxItemProvider
      * @see PlayerPickupItemEvent
@@ -63,10 +63,12 @@ public class KaxxItem {
      *
      * @param provider The provider for the KaxxItem.
      */
-    public KaxxItem(final KaxxItemProvider provider){
+    public KaxxItem(final KaxxItemProvider provider) {
         this.provider = provider;
+
         this.uniqueId = UUID.randomUUID();
-        KaxxItemManager.getInstance().registerItem(this);
+
+        KaxxItemHandler.getInstance().registerItem(this);
     }
 
     /**
@@ -75,7 +77,7 @@ public class KaxxItem {
      * @param droppable true if the KaxxItem is droppable, false otherwise
      * @return the modified KaxxItem object
      */
-    public KaxxItem droppable(boolean droppable) {
+    public KaxxItem droppable(final boolean droppable) {
         this.droppable = droppable;
         return this;
     }
@@ -86,7 +88,7 @@ public class KaxxItem {
      * @param pickable Boolean indicating if the KaxxItem is pickable or not.
      * @return The updated KaxxItem object.
      */
-    public KaxxItem pickable(boolean pickable) {
+    public KaxxItem pickable(final boolean pickable) {
         this.pickable = pickable;
         return this;
     }
@@ -97,7 +99,7 @@ public class KaxxItem {
      * @param breakable The breakable property value to set.
      * @return The modified KaxxItem instance.
      */
-    public KaxxItem breakable(boolean breakable) {
+    public KaxxItem breakable(final boolean breakable) {
         this.breakable = breakable;
         return this;
     }
@@ -108,7 +110,7 @@ public class KaxxItem {
      * @param player The player to retrieve the item for.
      * @return The item as an ItemStack.
      */
-    public ItemStack get(Player player){
+    public ItemStack get(final Player player) {
         ItemStack baseItem = provider.getBaseItem();
         initializeItemForPlayer(player, baseItem);
         return baseItem;
@@ -117,12 +119,12 @@ public class KaxxItem {
     /**
      * Initializes a KaxxItem for a specific player by invoking the provider's init method and setting a unique identifier.
      *
-     * @param player The player associated with the KaxxItem.
+     * @param player   The player associated with the KaxxItem.
      * @param baseItem The base item of the KaxxItem.
      */
-    private void initializeItemForPlayer(Player player, ItemStack baseItem) {
+    private void initializeItemForPlayer(final Player player, final ItemStack baseItem) {
         provider.init(player, baseItem);
-        setUniqueId(baseItem);
+        handleNBTUniqueIdChange(baseItem);
     }
 
     /**
@@ -130,11 +132,15 @@ public class KaxxItem {
      *
      * @param stack The ItemStack to set the unique ID for.
      */
-    private void setUniqueId(ItemStack stack){
+    private void handleNBTUniqueIdChange(final ItemStack stack) {
         net.minecraft.server.v1_8_R3.ItemStack item = CraftItemStack.asNMSCopy(stack);
+
         NBTTagCompound tag = item.getTag() == null ? new NBTTagCompound() : item.getTag();
-        tag.setString(KaxxItemManager.KAXX_ITEM_UUID, uniqueId.toString());
+
+        tag.setString(KaxxItemHandler.KAXX_ITEM_UUID, uniqueId.toString());
+
         item.setTag(tag);
+
         stack.setItemMeta(CraftItemStack.asBukkitCopy(item).getItemMeta());
     }
 
