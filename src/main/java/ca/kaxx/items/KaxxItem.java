@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
@@ -29,6 +30,33 @@ public class KaxxItem {
      */
     private final UUID uniqueId;
 
+
+    /**
+     * The droppable variable represents whether or not an item is droppable.
+     * If the value is true, the item can be dropped by a player.
+     * If the value is false, the item cannot be dropped by a player.
+     */
+    private boolean droppable;
+
+    /**
+     * The pickable variable determines whether or not a KaxxItem can be picked up by a player.
+     * A KaxxItem is considered pickable if its pickable attribute is set to true, and unpickable if it is set to false.
+     * When a player picks up a pickable KaxxItem, a {@link PlayerPickupItemEvent} is triggered, and the {@link KaxxItemProvider#onPickup(Player, PlayerPickupItemEvent)} method is
+     *  called.
+     *
+     * @see KaxxItemProvider
+     * @see PlayerPickupItemEvent
+     */
+    private boolean pickable;
+
+    /**
+     * Indicates whether this KaxxItem can be broken.
+     * If set to true, the item may be destroyed or damaged beyond use.
+     * The behavior when a KaxxItem is broken is determined by the implementation of the KaxxItemProvider interface.
+     */
+    private boolean breakable;
+
+
     /**
      * The constructor for the KaxxItem class.
      * Each KaxxItem has a provider, a unique identifier, and various methods to interact with the item.
@@ -39,6 +67,39 @@ public class KaxxItem {
         this.provider = provider;
         this.uniqueId = UUID.randomUUID();
         KaxxItemManager.getInstance().registerItem(this);
+    }
+
+    /**
+     * Sets whether the KaxxItem is droppable or not.
+     *
+     * @param droppable true if the KaxxItem is droppable, false otherwise
+     * @return the modified KaxxItem object
+     */
+    public KaxxItem droppable(boolean droppable) {
+        this.droppable = droppable;
+        return this;
+    }
+
+    /**
+     * Sets the pickability of the KaxxItem.
+     *
+     * @param pickable Boolean indicating if the KaxxItem is pickable or not.
+     * @return The updated KaxxItem object.
+     */
+    public KaxxItem pickable(boolean pickable) {
+        this.pickable = pickable;
+        return this;
+    }
+
+    /**
+     * Sets the breakable property of the KaxxItem.
+     *
+     * @param breakable The breakable property value to set.
+     * @return The modified KaxxItem instance.
+     */
+    public KaxxItem breakable(boolean breakable) {
+        this.breakable = breakable;
+        return this;
     }
 
     /**

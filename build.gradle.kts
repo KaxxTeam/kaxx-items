@@ -1,6 +1,7 @@
 plugins {
     java
     id("maven-publish")
+    id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
 group = "ca.kaxx"
@@ -8,6 +9,8 @@ version = "0.0.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
 }
 
 repositories {
@@ -30,6 +33,16 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/kaxxteam/kaxx-items")
+            name = "GitHubPackages"
+            credentials {
+                username = env.GITHUB_USERNAME.value
+                password = env.GITHUB_TOKEN.value
+            }
         }
     }
 }

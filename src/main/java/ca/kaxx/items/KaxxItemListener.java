@@ -104,7 +104,12 @@ public class KaxxItemListener implements Listener {
     private <T extends Event> void handleEvent(T event, ItemStack itemStack, Player player, BiConsumer<KaxxItemProvider, T> action) {
         this.manager.findKaxxItem(player, itemStack).ifPresent(item -> {
             if(event instanceof Cancellable) {
-                ((Cancellable) event).setCancelled(true);
+                if(event instanceof PlayerPickupItemEvent && !item.isPickable())
+                    ((Cancellable) event).setCancelled(true);
+                if(event instanceof PlayerDropItemEvent && !item.isDroppable())
+                    ((Cancellable) event).setCancelled(true);
+                if(event instanceof PlayerItemBreakEvent && !item.isBreakable())
+                    ((Cancellable) event).setCancelled(true);
             }
             action.accept(item.getProvider(), event);
         });
