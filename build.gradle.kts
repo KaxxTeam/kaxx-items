@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ca.kaxx"
-version = "0.0.2"
+version = "0.0.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8

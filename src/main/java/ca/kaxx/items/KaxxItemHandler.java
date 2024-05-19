@@ -22,7 +22,7 @@ public final class KaxxItemHandler {
     /**
      * The {@code KAXX_ITEM_UUID} is a constant string that represents the key used in an NBT tag to store the UUID associated with a specific ItemStack.
      * It is used in the KaxxItemManager class to manage KaxxItem objects.
-     * The UUID is generated when a KaxxItem is created and stored in the NBT tag of the ItemStack using the {@link KaxxItem#setUniqueId(ItemStack)} method.
+     * The UUID is generated when a KaxxItem is created and stored in the NBT tag of the ItemStack.
      * The UUID can be retrieved from the ItemStack using the {@link KaxxItemHandler#getKaxxItemUUID(ItemStack)} method.
      * <p>
      * Usage example:

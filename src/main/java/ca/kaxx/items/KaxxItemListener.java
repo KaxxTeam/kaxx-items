@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
 
 /**
@@ -36,6 +37,7 @@ public final class KaxxItemListener implements Listener {
      */
     @EventHandler
     public void onItemInteract(final PlayerInteractEvent event) {
+        if(event.getItem() == null) return;
         handleEvent(event, event.getItem(), (t, e) -> t.onInteract(e.getPlayer(), e));
     }
 
@@ -47,6 +49,7 @@ public final class KaxxItemListener implements Listener {
      */
     @EventHandler
     public void onItemDrop(final PlayerDropItemEvent event) {
+        if(event.getItemDrop() == null) return; //should never happen
         handleEvent(event, event.getItemDrop().getItemStack(), (t, e) -> t.onDrop(e.getPlayer(), e));
     }
 
@@ -57,6 +60,7 @@ public final class KaxxItemListener implements Listener {
      */
     @EventHandler
     public void onPickupItem(final PlayerPickupItemEvent event) {
+        if(event.getItem() == null) return; //should never happen
         handleEvent(event, event.getItem().getItemStack(), (t, e) -> t.onPickup(e.getPlayer(), e));
     }
 
@@ -67,6 +71,7 @@ public final class KaxxItemListener implements Listener {
      */
     @EventHandler
     public void onDurabilityChange(final PlayerItemDamageEvent event) {
+        if(event.getItem() == null) return; //should never happen
         handleEvent(event, event.getItem(), (t, e) -> t.onDurabilityChange(e.getPlayer(), e));
     }
 
@@ -77,6 +82,7 @@ public final class KaxxItemListener implements Listener {
      */
     @EventHandler
     public void onItemBreak(final PlayerItemBreakEvent event) {
+        if(event.getBrokenItem() == null) return; //should never happen
         handleEvent(event, event.getBrokenItem(), (t, e) -> t.onBreak(e.getPlayer(), e));
     }
 
@@ -100,7 +106,7 @@ public final class KaxxItemListener implements Listener {
      * @param itemStack the ItemStack associated with the event
      * @param action    the action to perform on the KaxxItemProvider
      */
-    private <T extends Event> void handleEvent(final T event, final ItemStack itemStack, final BiConsumer<KaxxItemProvider, T> action) {
+    private <T extends Event> void handleEvent(final @Nonnull T event, final @Nonnull ItemStack itemStack, @Nonnull final BiConsumer<KaxxItemProvider, T> action) {
         this.manager.findKaxxItem(itemStack).ifPresent(item -> {
             if (event instanceof Cancellable) {
                 if (event instanceof PlayerPickupItemEvent && !item.isPickable()) {
